@@ -1,36 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.bank</groupId>
 	<artifactId>vaadinbank</artifactId>
 	<name>VaadinBank</name>
 	<version>1.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
-
 	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-
 		<vaadin.version>14.1.25</vaadin.version>
-
 		<drivers.dir>${project.basedir}/drivers</drivers.dir>
 		<drivers.downloader.phase>pre-integration-test</drivers.downloader.phase>
 	</properties>
-
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>2.2.0.RELEASE</version>
 	</parent>
-
 	<repositories>
 		<!-- The order of definitions matters. Explicitly defining central here 
 			to make sure it has the highest priority. -->
-
 		<!-- Main Maven repository -->
 		<repository>
 			<id>central</id>
@@ -48,7 +40,6 @@
 			</snapshots>
 		</repository>
 	</repositories>
-
 	<pluginRepositories>
 		<!-- Main Maven repository -->
 		<pluginRepository>
@@ -59,7 +50,6 @@
 			</snapshots>
 		</pluginRepository>
 	</pluginRepositories>
-
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -71,14 +61,12 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-
 	<dependencies>
 		<dependency>
 			<groupId>com.vaadin</groupId>
 			<artifactId>vaadin-maven-plugin</artifactId>
 			<version>15.0.6</version>
 		</dependency>
-
 		<dependency>
 			<groupId>com.vaadin</groupId>
 			<!-- Replace artifactId with vaadin-core to use only free components -->
@@ -149,14 +137,12 @@
 			<artifactId>spring-security-config</artifactId>
 			<version>5.3.1.RELEASE</version>
 		</dependency>
-
 		<!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-web -->
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-web</artifactId>
 			<version>5.3.1.RELEASE</version>
 		</dependency>
-
 		<dependency>
 			<groupId>com.vaadin</groupId>
 			<artifactId>flow-server-production-mode</artifactId>
@@ -168,7 +154,6 @@
 			<artifactId>driver-binary-downloader-maven-plugin</artifactId>
 			<version>1.0.17</version>
 		</dependency>
-
 		<dependency>
 			<groupId>com.vaadin</groupId>
 			<artifactId>vaadin-cookie-consent-flow</artifactId>
@@ -179,14 +164,10 @@
 			<artifactId>flow-server-production-mode</artifactId>
 			<version>3.0.7</version>
 		</dependency>
-
-
 	</dependencies>
-
 	<build>
 		<defaultGoal>spring-boot:run</defaultGoal>
 		<plugins>
-
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
@@ -197,7 +178,6 @@
 					<maxAttempts>240</maxAttempts>
 				</configuration>
 			</plugin>
-
 			<!-- Take care of synchronizing java dependencies and imports in package.json 
 				and main.js files. It also creates webpack.config.js if not exists yet. -->
 			<plugin>
@@ -206,11 +186,42 @@
 				<version>${vaadin.version}</version>
 				<executions>
 					<execution>
+						<id>exec-npm-install</id>
+						<phase>generate-sources</phase>
+						<configuration>
+							<workingDirectory>${project.basedir}/src/main/resources</workingDirectory>
+							<executable>npm</executable>
+							<arguments>
+								<argument>install</argument>
+							</arguments>
+						</configuration>
 						<goals>
 							<goal>prepare-frontend</goal>
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>com.github.eirslett</groupId>
+				<artifactId>frontend-maven-plugin</artifactId>
+				<!-- Use the latest released version:
+        https://repo1.maven.org/maven2/com/github/eirslett/frontend-maven-plugin/ -->
+				<version>1.8.0</version>
+				<executions>
+					<execution>
+						<!-- optional: you don't really need execution ids, but it looks nice in your build log. -->
+						<id>install node and npm</id>
+						<goals>
+							<goal>install-node-and-npm</goal>
+						</goals>
+						<!-- optional: default phase is "generate-resources" -->
+						<phase>generate-resources</phase>
+					</execution>
+				</executions>
+				<configuration>
+					<nodeVersion>${node.version}</nodeVersion>
+					<npmVersion>${npm.version}</npmVersion>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>com.google.cloud.tools</groupId>
@@ -241,7 +252,6 @@
 			</plugin>
 		</plugins>
 	</build>
-
 	<profiles>
 		<profile>
 			<id>production</id>
@@ -259,9 +269,7 @@
 					<artifactId>vaadin-cookie-consent-flow</artifactId>
 					<version>2.0.2</version>
 				</dependency>
-
 			</dependencies>
-
 			<build>
 				<plugins>
 					<plugin>
